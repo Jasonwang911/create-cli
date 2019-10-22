@@ -44,7 +44,7 @@ Reflect.ownKeys(mapAction).forEach((action) => {
         console.log(mapAction[action].description);
       } else {
         // 从create.js引入create命令逻辑  [node , jason-cli, create]
-        require(path.resolve(__dirname, action))(...process.argv.slice(2));
+        require(path.resolve(__dirname, action))(...process.argv.slice(3));
       }
     });
 });
