@@ -4,21 +4,27 @@ const axios = require('axios');
 const ora = require('ora');
 const chalk = require('chalk');
 const Inquirer = require('inquirer'); // 是一个类
-const { promisify } = require('util');
+const {
+  promisify
+} = require('util');
 // 不是基于promise二十基于回调函数，需要转换为promise
 let downloadGitRepo = require('download-git-repo');
 let ncp = require('ncp');
 // 便利文件夹，判断需不需要渲染
 const Metalsmith = require('metalsmith');
 // 统一了所有模板引擎
-let { render } = require('consolidate').ejs;
+let {
+  render
+} = require('consolidate').ejs;
 
 render = promisify(render);
 
 
 downloadGitRepo = promisify(downloadGitRepo);
 ncp = promisify(ncp);
-const { downloadDirectory } = require('./constants');
+const {
+  downloadDirectory
+} = require('./constants');
 // create 的所有逻辑
 // 功能是创建项目
 // 拉去对应项目列表，让用户选择对应版本
@@ -38,19 +44,23 @@ const waitFnLoading = (fn, message) => async (...args) => {
 
 // 1. 获取项目的所有模板 在获取前显示loading 获取结束关闭loading  使用报ora
 const fetchReplList = async () => {
-  const { data } = await axios.get('https://api.github.com/orgs/zhu-cli/repos');
+  const {
+    data
+  } = await axios.get('https://api.github.com/orgs/jason-cli/repos');
   return data;
 };
 
 // 2. 获取对应项目版本号的tag
 const fetchTaglList = async (repo) => {
-  const { data } = await axios.get(`https://api.github.com/repos/zhu-cli/${repo}/tags`);
+  const {
+    data
+  } = await axios.get(`https://api.github.com/repos/jason-cli/${repo}/tags`);
   return data;
 };
 
 // 3.下载模板
 const download = async (repo, tag) => {
-  let api = `zhu-cli/${repo}`;
+  let api = `jason-cli/${repo}`;
   if (tag) {
     api = `${api}#${tag}`;
   }
@@ -62,9 +72,10 @@ const download = async (repo, tag) => {
 module.exports = async (projectName) => {
   let repos = await waitFnLoading(fetchReplList, 'fetching template ...')();
   repos = repos.map((item) => item.name);
-  console.log(repos);
   // 选择模板 inquirer
-  const { repo } = await Inquirer.prompt({
+  const {
+    repo
+  } = await Inquirer.prompt({
     name: 'repo', // 获取选择候的结果
     type: 'list', // list checkbox input
     message: `${chalk.green('please choise a template to create project')}`,
@@ -74,8 +85,9 @@ module.exports = async (projectName) => {
   // 通过当前选择的项目拉去对应的项目，并选择模板对应的版本号
   let tags = await waitFnLoading(fetchTaglList, 'fetching tags ...')(repo);
   tags = tags.map((tag) => tag.name);
-  console.log(tags);
-  const { tag } = await Inquirer.prompt({
+  const {
+    tag
+  } = await Inquirer.prompt({
     name: 'tag', // 获取选择候的结果
     type: 'list', // list checkbox input
     message: "please choise a tag of your choise's template",

@@ -30,6 +30,11 @@ nrm uyse npm
 ``` 
 npm addUser  
 ```
+发布包
 ```
 npm publish
+```
+卸载已发布的包
+```
+npm unpublish --force
 ```
